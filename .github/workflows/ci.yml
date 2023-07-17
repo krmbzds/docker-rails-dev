@@ -2,10 +2,10 @@ name: Build images
 on:
   push:
     branches:
-      - main
+      - master
   pull_request:
     branches:
-      - main
+      - master
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -13,7 +13,7 @@ concurrency:
 
 env:
   TAG_NAME: 3.2.2-alpine
-  USER_NAME: ledermann
+  USER_NAME: krmbzds
 
 jobs:
   build:
@@ -36,7 +36,7 @@ jobs:
 
       - name: Login to ghcr.io
         uses: docker/login-action@v2
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/master'
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -47,21 +47,21 @@ jobs:
         with:
           context: '{{defaultContext}}:Builder'
           platforms: linux/amd64,linux/arm64
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: ${{ github.ref == 'refs/heads/master' }}
           tags: |
-            ghcr.io/${{ env.USER_NAME }}/rails-base-builder:${{ env.TAG_NAME }}
-            ${{ env.USER_NAME }}/rails-base-builder:${{ env.TAG_NAME }}
-            ghcr.io/${{ env.USER_NAME }}/rails-base-builder:latest
-            ${{ env.USER_NAME }}/rails-base-builder:latest
+            ghcr.io/${{ env.USER_NAME }}/rails-dev-builder:${{ env.TAG_NAME }}
+            ${{ env.USER_NAME }}/rails-dev-builder:${{ env.TAG_NAME }}
+            ghcr.io/${{ env.USER_NAME }}/rails-dev-builder:latest
+            ${{ env.USER_NAME }}/rails-dev-builder:latest
 
       - name: Build and push FINAL image
         uses: docker/build-push-action@v4
         with:
           context: '{{defaultContext}}:Final'
           platforms: linux/amd64,linux/arm64
-          push: ${{ github.ref == 'refs/heads/main' }}
+          push: ${{ github.ref == 'refs/heads/master' }}
           tags: |
-            ghcr.io/${{ env.USER_NAME }}/rails-base-final:${{ env.TAG_NAME }}
-            ${{ env.USER_NAME }}/rails-base-final:${{ env.TAG_NAME }}
-            ghcr.io/${{ env.USER_NAME }}/rails-base-final:latest
-            ${{ env.USER_NAME }}/rails-base-final:latest
+            ghcr.io/${{ env.USER_NAME }}/rails-dev-final:${{ env.TAG_NAME }}
+            ${{ env.USER_NAME }}/rails-dev-final:${{ env.TAG_NAME }}
+            ghcr.io/${{ env.USER_NAME }}/rails-dev-final:latest
+            ${{ env.USER_NAME }}/rails-dev-final:latest

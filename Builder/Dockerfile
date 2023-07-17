@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1.0-experimental
 FROM ruby:3.2.2-alpine
-LABEL maintainer="georg@ledermann.dev"
+LABEL maintainer="krmbzds.github@gmail.com"
 
 # Add basic packages
 RUN apk add --no-cache \
@@ -38,10 +38,9 @@ RUN bundle config --local frozen 1 && \
 
 #### ONBUILD: Add triggers to the image, executed later while building a child image
 
-# Install Ruby gems (for production only)
+# Install Ruby gems
 ONBUILD COPY Gemfile* /app/
 ONBUILD RUN --mount=type=secret,id=bundleconfig,dst=/root/.bundle/config \
-            bundle config --local without 'development test' && \
             bundle install -j4 --retry 3 && \
             # Precompile gems with Bootsnap (and ignore errors)
             bundle exec bootsnap precompile --gemfile || true && \
@@ -71,7 +70,7 @@ ONBUILD RUN mv config/credentials config/credentials.bak 2>/dev/null || true
 ONBUILD RUN --mount=type=secret,id=npmrc,dst=/root/.npmrc \
             --mount=type=secret,id=yarnrc,dst=/root/.yarnrc.yml \
             yarn install
-ONBUILD RUN RAILS_ENV=production \
+ONBUILD RUN RAILS_ENV=development \
             SECRET_KEY_BASE=dummy \
             RAILS_MASTER_KEY=dummy \
             bundle exec rails assets:precompile

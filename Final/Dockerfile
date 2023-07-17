@@ -1,5 +1,5 @@
 FROM ruby:3.2.2-alpine
-LABEL maintainer="georg@ledermann.dev"
+LABEL maintainer="krmbzds.github@gmail.com"
 
 # Add basic packages
 RUN apk add --no-cache \
@@ -20,8 +20,8 @@ WORKDIR /app
 # Expose Puma port
 EXPOSE 3000
 
-# This image is for production env only
-ENV RAILS_ENV production
+# This image is for development env only
+ENV RAILS_ENV development
 
 # Write GIT meta data from arguments to env vars
 ONBUILD ARG COMMIT_SHA

@@ -1,6 +1,6 @@
-[![Build images](https://github.com/ledermann/docker-rails-base/actions/workflows/ci.yml/badge.svg)](https://github.com/ledermann/docker-rails-base/actions/workflows/ci.yml)
+[![Build images](https://github.com/krmbzds/docker-rails-dev/actions/workflows/ci.yml/badge.svg)](https://github.com/krmbzds/docker-rails-dev/actions/workflows/ci.yml)
 
-# DockerRailsBase
+# DockerRailsDev
 
 Building Docker images usually takes a long time. This repo contains base images with preinstalled dependencies for [Ruby on Rails](https://rubyonrails.org/), so building a production image will be **2-3 times faster**.
 
@@ -19,7 +19,7 @@ I compared building times using a typical Rails application. This is the result 
 - Based on official Ruby image: **4:50 min**
 - Based on DockerRailsBase: **1:57 min**
 
-As you can see, using DockerRailsBase is more than **2 times faster** compared to the official Ruby image. It saves nearly **3min** on every build.
+As you can see, using DockerRailsDev is more than **2 times faster** compared to the official Ruby image. It saves nearly **3min** on every build.
 
 Note: Before I started timing, the base image was not available on my machine, so it was downloaded first, which took some time. If the base image is already available, the building time is only 1:18min (**3 times faster**).
 
@@ -73,8 +73,8 @@ Using [Dependabot](https://dependabot.com/), every updated Ruby gem or Node modu
 Add this `Dockerfile` to your application:
 
 ```Dockerfile
-FROM ledermann/rails-base-builder:3.2.2-alpine AS Builder
-FROM ledermann/rails-base-final:3.2.2-alpine
+FROM krmbzds/rails-dev-builder:3.2.2-alpine AS Builder
+FROM krmbzds/rails-dev-final:3.2.2-alpine
 USER app
 # Optional: Enable YJIT
 # ENV RUBY_YJIT_ENABLE=1
@@ -94,8 +94,8 @@ $ docker build .
 [BuildKit](https://docs.docker.com/develop/develop-images/build_enhancements/) requires a little [workaround](https://github.com/moby/buildkit/issues/816) to trigger the ONBUILD statements. Add a `COPY` statement to the `Dockerfile`:
 
 ```Dockerfile
-FROM ledermann/rails-base-builder:3.2.2-alpine AS Builder
-FROM ledermann/rails-base-final:3.2.2-alpine
+FROM krmbzds/rails-dev-builder:3.2.2-alpine AS Builder
+FROM krmbzds/rails-dev-final:3.2.2-alpine
 
 # Workaround to trigger Builder's ONBUILDs to finish:
 COPY --from=Builder /etc/alpine-release /tmp/dummy
@@ -169,8 +169,8 @@ deploy:
 
 Both Docker images (`Builder` and `Final`) are regularly published at DockerHub and tagged with the current Ruby version:
 
-- https://hub.docker.com/r/ledermann/rails-base-builder/tags
-- https://hub.docker.com/r/ledermann/rails-base-final/tags
+- https://hub.docker.com/r/krmbzds/rails-dev-builder/tags
+- https://hub.docker.com/r/krmbzds/rails-dev-final/tags
 
 Beware: The published images are **not** immutable. When a dependency (e.g. Ruby gem) is updated, the images will be republished using the **same** tag.
 
